@@ -11,6 +11,7 @@
 
 #define TAG "network"
 
+//TCP SEND
 int tcp_ipv4_send_packet(char* ip, char* port, char* data) {
 
   int sock;
@@ -53,3 +54,7 @@ int tcp_ipv4_send_packet(char* ip, char* port, char* data) {
   freeaddrinfo(res);
   return 0;
 }
+
+
+// TCP BIND
+int tcp_ipv4_b
