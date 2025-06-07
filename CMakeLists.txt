@@ -6,5 +6,5 @@ project(libjunk VERSION 1.0
 add_library(junk SHARED)
 add_subdirectory(src)
 target_include_directories(junk PUBLIC include)
-install(TARGETS junk DESTINATION lib)
-install(FILES include DESTINATION include)
+install(TARGETS junk)
+install(DIRECTORY include/ DESTINATION include)
