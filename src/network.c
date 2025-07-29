@@ -1,4 +1,5 @@
 #include "junk/network.h"
+#include <stddef.h>
 #include <sys/socket.h>
 #include <linux/if_packet.h>
 #include <linux/if_ether.h>
@@ -68,7 +69,7 @@ int eth_bind(char address[]) {
   int sock;
   struct sockaddr_ll addrinfo;
 
-  if ((sock = socket(AF_PACKET, SOCK_DGRAM, htons(ETH_P_ARP))) == -1) {
+  if ((sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP))) == -1) {
     fprintf(stderr, "%s: socket (%d): %s\n", TAG, errno, strerror(errno));
     return errno;
   }
@@ -89,7 +90,7 @@ int eth_bind(char address[]) {
   );
   addrinfo.sll_halen = 6;
 
-  fprintf(stderr, "%s: target mac (%x:%x:%x:%x:%x:%x)\n", TAG, addrinfo.sll_addr[0], addrinfo.sll_addr[1], addrinfo.sll_addr[2], addrinfo.sll_addr[3], addrinfo.sll_addr[4], addrinfo.sll_addr[5]);
+  fprintf(stderr, "%s: target mac (%02x:%02x:%02x:%02x:%02x:%02x)\n", TAG, addrinfo.sll_addr[0], addrinfo.sll_addr[1], addrinfo.sll_addr[2], addrinfo.sll_addr[3], addrinfo.sll_addr[4], addrinfo.sll_addr[5]);
 
   int status = 0;
   if ((status = bind(sock, (struct sockaddr*) &addrinfo, sizeof(addrinfo))) != 0) {
@@ -105,6 +106,29 @@ int eth_bind(char address[]) {
  *
  */
 int eth_recv(int sockfd) {
+  int buffer_len = 200;
+  char buffer[buffer_len];
+  memset(buffer, 0, buffer_len);
+  int bytes_read = 0;
+  int total_bytes_read = 0;
 
-  return sock;
+  while (1) {
+     bytes_read = recv(sockfd, &buffer[total_bytes_read], buffer_len - total_bytes_read, 0);
+     if (bytes_read == -1) {
+      fprintf(stderr, "%s: recv (%d): %s\n", TAG, errno, strerror(errno));
+      return -1;
+     }
+     else if (bytes_read > 0) {
+       fprintf(stderr, "%s: recv: read %d bytes, total %d\n", TAG, bytes_read, total_bytes_read);
+       total_bytes_read += bytes_read;
+     }
+     else {
+       fprintf(stderr, "\nCharacters:\n");
+       struct ethhdr* recv_struct = (struct ethhdr*) buffer;
+       fprintf(stderr, "%s: source mac (%02x:%02x:%02x:%02x:%02x:%02x)\n", TAG, recv_struct->h_source[0], recv_struct->h_source[1], recv_struct->h_source[2], recv_struct->h_source[3], recv_struct->h_source[4], recv_struct->h_source[5]);
+       fprintf(stderr, "%s: dest mac (%02x:%02x:%02x:%02x:%02x:%02x)\n", TAG, recv_struct->h_dest[0], recv_struct->h_dest[1], recv_struct->h_dest[2], recv_struct->h_dest[3], recv_struct->h_dest[4], recv_struct->h_dest[5]);
+
+       return 0;
+     }
+  }
 }
