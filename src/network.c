@@ -124,10 +124,12 @@ int eth_recv(int sockfd) {
      }
      else {
        fprintf(stderr, "\nCharacters:\n");
-       struct ethhdr* recv_struct = (struct ethhdr*) buffer;
+       ethhdr* recv_struct = (ethhdr*) buffer;
        fprintf(stderr, "%s: source mac (%02x:%02x:%02x:%02x:%02x:%02x)\n", TAG, recv_struct->h_source[0], recv_struct->h_source[1], recv_struct->h_source[2], recv_struct->h_source[3], recv_struct->h_source[4], recv_struct->h_source[5]);
        fprintf(stderr, "%s: dest mac (%02x:%02x:%02x:%02x:%02x:%02x)\n", TAG, recv_struct->h_dest[0], recv_struct->h_dest[1], recv_struct->h_dest[2], recv_struct->h_dest[3], recv_struct->h_dest[4], recv_struct->h_dest[5]);
 
+       arp_packet* packet = (arp_packet*) (buffer + sizeof (ethhdr));
+ 
        return 0;
      }
   }
