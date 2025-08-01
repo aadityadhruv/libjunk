@@ -9,10 +9,6 @@ int ipv4_bind(char* ip, char* port, char* data);
 
 
 //Layer 2, Ethernet
-int eth_bind(char address[]);
-int eth_send(int sockfd, char* data);
-int eth_recv(int sockfd);
-
 typedef struct ethhdr ethhdr;
 
 typedef struct arp_packet {
@@ -26,3 +22,7 @@ typedef struct arp_packet {
   unsigned char target_hardware_address[6];
   unsigned char target_protocol_address[4];
   } arp_packet;
+
+int eth_bind(char address[]);
+int eth_send(int sockfd, char* data);
+int eth_recv(int sockfd, arp_packet* packet);
