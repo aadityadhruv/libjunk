@@ -3,6 +3,7 @@
 
 //Layer 4, TCP
 #include <linux/if_ether.h>
+#include <linux/types.h>
 int tcp_ipv4_send(char* ip, char* port, char* data);
 int tcp_ipv4_recv(char* ip, char* port, char* data);
 int ipv4_bind(char* ip, char* port, char* data);
@@ -12,17 +13,17 @@ int ipv4_bind(char* ip, char* port, char* data);
 typedef struct ethhdr ethhdr;
 
 typedef struct arp_packet {
-  unsigned char hardware_type[2];
-  unsigned char protocol_type[2];
-  unsigned char hardware_length[1];
-  unsigned char protocol_length[1];
-  unsigned char operation[2];
+  __u16 hardware_type;
+  __u16 protocol_type;
+  __u8 hardware_length;
+  __u8 protocol_length;
+  __u16 operation;
   unsigned char sender_hardware_address[6];
   unsigned char sender_protocol_address[4];
   unsigned char target_hardware_address[6];
   unsigned char target_protocol_address[4];
   } arp_packet;
 
-int eth_bind(char address[]);
-int eth_send(int sockfd, char* data);
-int eth_recv(int sockfd, arp_packet* packet);
+int eth_arp_bind(char address[]);
+int eth_arp_send(int sockfd, arp_packet* data);
+int eth_arp_recv(int sockfd, arp_packet* packet);

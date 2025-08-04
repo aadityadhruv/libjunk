@@ -1,6 +1,8 @@
 #include "junk/network.h"
 #include <arpa/inet.h>
+#include <net/if.h>
 #include <errno.h>
+#include <linux/if_arp.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <net/ethernet.h> /* the L2 protocols */
@@ -60,11 +62,11 @@ int tcp_ipv4_send(char *ip, char *port, char *data) {
   return 0;
 }
 
-/* eth_bind
+/* eth_arp_bind
  * Bind to a L2 Ethernet address.
  *
  */
-int eth_bind(char address[]) {
+int eth_arp_bind(char address[]) {
 
   int sock;
   struct sockaddr_ll addrinfo;
@@ -99,12 +101,12 @@ int eth_bind(char address[]) {
   return sock;
 }
 
-/* eth_recv
+/* eth_arp_recv
  * Recv on a L2 Ethernet address.
  *
  */
-int eth_recv(int sockfd, arp_packet *packet) {
-  int buffer_len = 200;
+int eth_arp_recv(int sockfd, arp_packet *packet) {
+  int buffer_len = sizeof(ethhdr) + sizeof(arp_packet);
   char buffer[buffer_len];
   memset(buffer, 0, buffer_len);
   int bytes_read = 0;
@@ -134,6 +136,50 @@ int eth_recv(int sockfd, arp_packet *packet) {
 
       memcpy((char *)packet, (char *)(buffer + sizeof(ethhdr)),
              sizeof(arp_packet));
+      return 0;
+    }
+  }
+}
+
+int eth_arp_send(int sockfd, arp_packet *packet) {
+  char buffer[sizeof(ethhdr) + sizeof(arp_packet)];
+  memset(buffer, 0, sizeof(buffer));
+  ethhdr *eth_header = (ethhdr *)buffer;
+  memcpy(eth_header->h_source, packet->sender_hardware_address,
+         sizeof(packet->sender_hardware_address));
+  memcpy(eth_header->h_dest, packet->target_hardware_address,
+         sizeof(packet->target_hardware_address));
+  eth_header->h_proto = htons(ETH_P_ARP);
+  memcpy(buffer + sizeof(ethhdr), packet, sizeof(arp_packet));
+
+  struct sockaddr_ll addrinfo;
+  memset(&addrinfo, 0, sizeof addrinfo);
+  addrinfo.sll_family = AF_PACKET;
+  addrinfo.sll_protocol = htonl(ETH_P_ARP);
+  addrinfo.sll_ifindex = if_nametoindex("enp6s0");
+  addrinfo.sll_hatype = htonl(ARPHRD_ETHER);
+  addrinfo.sll_pkttype = PACKET_BROADCAST;
+  addrinfo.sll_halen = 6;
+  memcpy(addrinfo.sll_addr, packet->target_hardware_address, sizeof(packet->target_hardware_address));
+
+ fprintf(stderr, "network: send to %hhx:%hhx:%hhx:%hhx:%hhx:%hhx\n", addrinfo.sll_addr[0],addrinfo.sll_addr[1],addrinfo.sll_addr[2],addrinfo.sll_addr[3],addrinfo.sll_addr[4],addrinfo.sll_addr[5]);
+
+  int bytes_sent = 0;
+  int total_bytes_sent = 0;
+  while (1) {
+    bytes_sent = sendto(sockfd, buffer + total_bytes_sent,
+                      sizeof(buffer) - total_bytes_sent, 0, (struct sockaddr*)&addrinfo, sizeof(addrinfo));
+
+    if (bytes_sent == -1) {
+      fprintf(stderr, "%s: send (%d): %s\n", TAG, errno, strerror(errno));
+      return -1;
+    } else if (bytes_sent < sizeof(buffer)) {
+      fprintf(stderr, "%s: send: sent %d bytes, total %d\n", TAG, bytes_sent,
+              total_bytes_sent);
+      total_bytes_sent += bytes_sent;
+    } else {
+      fprintf(stderr, "%s: send: sent %d bytes, total %d\n", TAG, bytes_sent,
+              total_bytes_sent);
       return 0;
     }
   }
