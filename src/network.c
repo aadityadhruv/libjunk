@@ -1,5 +1,6 @@
 #include "junk/network.h"
 #include <arpa/inet.h>
+#include <linux/if_link.h>
 #include <net/if.h>
 #include <errno.h>
 #include <linux/if_arp.h>
@@ -14,6 +15,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <ifaddrs.h>
 
 #define TAG "network"
 
@@ -156,7 +158,26 @@ int eth_arp_send(int sockfd, arp_packet *packet) {
   memset(&addrinfo, 0, sizeof addrinfo);
   addrinfo.sll_family = AF_PACKET;
   addrinfo.sll_protocol = htonl(ETH_P_ARP);
-  addrinfo.sll_ifindex = if_nametoindex("enp6s0");
+  struct ifaddrs *ifaddr;
+  if (getifaddrs(&ifaddr) == -1) {
+       perror("getifaddrs");
+  }
+
+  for (struct ifaddrs* ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr == NULL) {
+      continue;
+    }
+    int family = ifa->ifa_addr->sa_family;
+    if (family == AF_PACKET) {
+      struct sockaddr_ll* hwaddr = (struct sockaddr_ll*)ifa->ifa_addr;
+      if (memcmp(hwaddr->sll_addr, packet->sender_hardware_address, 6) == 0) {
+        fprintf(stderr, "Found intf ifindex %d\n", hwaddr->sll_ifindex);
+        addrinfo.sll_ifindex = hwaddr->sll_ifindex;
+      }
+    }
+  }
+
+
   addrinfo.sll_hatype = htonl(ARPHRD_ETHER);
   addrinfo.sll_pkttype = PACKET_BROADCAST;
   addrinfo.sll_halen = 6;
