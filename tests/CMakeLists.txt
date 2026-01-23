@@ -1,0 +1,5 @@
+add_executable(test_junk test_vector.c)
+target_link_libraries(test_junk PRIVATE junk)
+set_target_properties(test_junk PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests/")
+target_include_directories(test_junk PRIVATE ../include)
+add_test(NAME test_vector COMMAND "${CMAKE_BINARY_DIR}/tests/test_junk")
