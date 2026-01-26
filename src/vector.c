@@ -14,8 +14,8 @@ int vector_init(struct vector** vec) {
         perror("vec: Could not alloc memory for vec");
         return -1;
     }
-    (*vec)->array = malloc(vector_init_size);
-    memset((*vec)->array, 0, vector_init_size);
+    (*vec)->array = malloc(sizeof(void*) * vector_init_size);
+    memset((*vec)->array, 0, sizeof(void*) * vector_init_size);
     if ((*vec)->array == NULL) {
         perror("vec: Could not alloc memory for vec array");
         return -1;
@@ -28,13 +28,14 @@ int vector_insert(struct vector* vec, void* element, int pos) {
     if (pos > vec->len) {
         return -1;
     }
-    if (vec->size + 1 > vec->size / scale_factor) {
-        void* ret = realloc(vec->array, vec->size * scale_factor);
-        memset(vec->array + vec->size, 0, vec->size);
+    if (vec->len + 1 > vec->size / scale_factor) {
+        void* ret = realloc(vec->array, sizeof(void*) * vec->size * scale_factor);
         if (ret == NULL) {
             perror("vec: Could not realloc on insert");
             return -1;
         }
+        vec->array = ret;
+        memset(vec->array + vec->size, 0, sizeof(void*) * vec->size);
         vec->size *= scale_factor;
     }
     void** ptr = vec->array + pos;
