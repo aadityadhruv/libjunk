@@ -1,3 +1,4 @@
+#ifdef __linux__
 #include "junk/network.h"
 #include <arpa/inet.h>
 #include <linux/if_link.h>
@@ -205,3 +206,5 @@ int eth_arp_send(int sockfd, arp_packet *packet) {
     }
   }
 }
+
+#endif
