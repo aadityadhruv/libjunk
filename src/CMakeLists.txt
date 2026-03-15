@@ -1,1 +1,4 @@
-target_sources(junk PUBLIC test.c network.c vector.c)
+target_sources(junk PUBLIC
+    network.c
+    vector.c
+)

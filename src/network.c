@@ -20,7 +20,7 @@
 
 #define TAG "network"
 
-int tcp_ipv4_send(char *ip, char *port, char *data) {
+int junk_tcp_ipv4_send(char *ip, char *port, char *data) {
 
   int sock;
   struct addrinfo hints, *p, *res;
@@ -69,7 +69,7 @@ int tcp_ipv4_send(char *ip, char *port, char *data) {
  * Bind to a L2 Ethernet address.
  *
  */
-int eth_arp_bind(char address[]) {
+int junk_eth_arp_bind(char address[]) {
 
   int sock;
   struct sockaddr_ll addrinfo;
@@ -108,7 +108,7 @@ int eth_arp_bind(char address[]) {
  * Recv on a L2 Ethernet address.
  *
  */
-int eth_arp_recv(int sockfd, arp_packet *packet) {
+int junk_eth_arp_recv(int sockfd, arp_packet *packet) {
   int buffer_len = sizeof(ethhdr) + sizeof(arp_packet);
   char buffer[buffer_len];
   memset(buffer, 0, buffer_len);
@@ -144,7 +144,7 @@ int eth_arp_recv(int sockfd, arp_packet *packet) {
   }
 }
 
-int eth_arp_send(int sockfd, arp_packet *packet) {
+int junk_eth_arp_send(int sockfd, arp_packet *packet) {
   char buffer[sizeof(ethhdr) + sizeof(arp_packet)];
   memset(buffer, 0, sizeof(buffer));
   ethhdr *eth_header = (ethhdr *)buffer;

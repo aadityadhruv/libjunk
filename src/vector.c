@@ -7,9 +7,9 @@
 static int vector_init_size = 16;
 static int scale_factor = 2;
 
-int vector_init(struct vector** vec) {
-    *vec = malloc(sizeof(struct vector));
-    memset(*vec, 0, sizeof(struct vector));
+int junk_vector_init(struct junk_vector** vec) {
+    *vec = malloc(sizeof(struct junk_vector));
+    memset(*vec, 0, sizeof(struct junk_vector));
     if (*vec == NULL) {
         perror("vec: Could not alloc memory for vec");
         return -1;
@@ -24,7 +24,7 @@ int vector_init(struct vector** vec) {
     (*vec)->len = 0;
     return 0;
 }
-int vector_insert(struct vector* vec, void* element, int pos) {
+int junk_vector_insert(struct junk_vector* vec, void* element, int pos) {
     if (pos > vec->len) {
         return -1;
     }
@@ -47,18 +47,18 @@ int vector_insert(struct vector* vec, void* element, int pos) {
     return 0;
 }
 
-int vector_length(struct vector *vec) {
+int junk_vector_length(struct junk_vector *vec) {
     return vec->len;
 }
 
-void* vector_get(struct vector* vec, int index) {
+void* junk_vector_get(struct junk_vector* vec, int index) {
     if (index > vec->len) {
         return NULL;
     }
     void** ptr = vec->array + index;
     return *ptr;
 } 
-void* vector_pop(struct vector* vec, int index) {
+void* junk_vector_pop(struct junk_vector* vec, int index) {
     if (index > vec->len) {
         return NULL;
     }

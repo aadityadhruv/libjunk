@@ -14,37 +14,37 @@
  * care of the pointer memory allocation, i.e the array itself
  *
  */
-struct vector {
+struct junk_vector {
     int size;
     int len;
     void** array;
 };
 
-/* vector_init
+/* junk_vector_init
  * Initalize a vector struct pointer to start storing data.
  * The vec parameter will be initialized in the function itself.
  * Returns 0 on success, non zero rc on error
  */
-int vector_init(struct vector** vec);
+int junk_vector_init(struct junk_vector** vec);
 
 /*
  * Insert an item in an initialized vector at a given position pos
  */
-int vector_insert(struct vector* vec, void* element, int pos);
+int junk_vector_insert(struct junk_vector* vec, void* element, int pos);
 
 /*
  * Get the current size of a vector
  */
-int vector_length(struct vector* vec);
+int junk_vector_length(struct junk_vector* vec);
 /*
  * Get the pointer stored in the vector at index from the vector vec
  */
-void* vector_get(struct vector* vec, int index); 
+void* junk_vector_get(struct junk_vector* vec, int index); 
 
 /*
  * Delete and return the element at index from the vector vec
  */
-void* vector_pop(struct vector* vec, int index);
+void* junk_vector_pop(struct junk_vector* vec, int index);
 
-#define VECTOR_INSERT(vec, element) vector_insert(vec, element, vec->len)
-#define VECTOR_POP(vec) vector_pop(vec, vec->len)mutt_generate_attachment_commands
+#define JUNK_VECTOR_INSERT(vec, element) junk_vector_insert(vec, element, vec->len)
+#define JUNK_VECTOR_POP(vec) junk_vector_pop(vec, vec->len)mutt_generate_attachment_commands
