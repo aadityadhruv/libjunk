@@ -7,21 +7,15 @@
 static int vector_init_size = 16;
 static int scale_factor = 2;
 
-int junk_vector_init(struct junk_vector** vec) {
-    *vec = malloc(sizeof(struct junk_vector));
-    memset(*vec, 0, sizeof(struct junk_vector));
-    if (*vec == NULL) {
-        perror("vec: Could not alloc memory for vec");
-        return -1;
-    }
-    (*vec)->array = malloc(sizeof(void*) * vector_init_size);
-    memset((*vec)->array, 0, sizeof(void*) * vector_init_size);
-    if ((*vec)->array == NULL) {
+int junk_vector_init(struct junk_vector* vec) {
+    vec->array = malloc(sizeof(void*) * vector_init_size);
+    memset(vec->array, 0, sizeof(void*) * vector_init_size);
+    if (vec->array == NULL) {
         perror("vec: Could not alloc memory for vec array");
         return -1;
     }
-    (*vec)->size = vector_init_size;
-    (*vec)->len = 0;
+    vec->size = vector_init_size;
+    vec->len = 0;
     return 0;
 }
 int junk_vector_insert(struct junk_vector* vec, void* element, int pos) {

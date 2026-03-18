@@ -25,7 +25,7 @@ struct junk_vector {
  * The vec parameter will be initialized in the function itself.
  * Returns 0 on success, non zero rc on error
  */
-int junk_vector_init(struct junk_vector** vec);
+int junk_vector_init(struct junk_vector* vec);
 
 /*
  * Insert an item in an initialized vector at a given position pos
@@ -46,5 +46,11 @@ void* junk_vector_get(struct junk_vector* vec, int index);
  */
 void* junk_vector_pop(struct junk_vector* vec, int index);
 
-#define JUNK_VECTOR_INSERT(vec, element) junk_vector_insert(vec, element, vec->len)
-#define JUNK_VECTOR_POP(vec) junk_vector_pop(vec, vec->len)mutt_generate_attachment_commands
+/*
+ * Free data allocated by the vector. Note that this does
+ * not touch the vector pointer itself
+ */
+void* junk_vector_pop(struct junk_vector* vec, int index);
+
+#define JUNK_VECTOR_INSERT(vec, element) junk_vector_insert(vec, element, (vec)->len)
+#define JUNK_VECTOR_POP(vec) junk_vector_pop(vec, (vec)->len)mutt_generate_attachment_commands

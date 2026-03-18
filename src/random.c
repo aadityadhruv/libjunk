@@ -1,15 +1,13 @@
 #include "junk/random.h"
 #include <limits.h>
-#include <stdlib.h>
 
 
-struct junk_rand* junk_rand_init(int seed) {
-    struct junk_rand* r = malloc(sizeof(struct junk_rand));
+int junk_rand_init(int seed, struct junk_rand* r) {
     r->x = seed;
     r->m = (1ul << 48);
     r->a = 25214903917;
     r->c = 11;
-    return r;
+    return 0;
 }
 int junk_rand(struct junk_rand* r) {
     // Bitwise AND is optimization for power of 2 moduleo

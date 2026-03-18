@@ -9,6 +9,17 @@ add_subdirectory(src)
 target_include_directories(junk PUBLIC include)
 install(TARGETS junk)
 install(DIRECTORY include/ DESTINATION include)
+target_compile_options(junk PRIVATE
+    -Wall
+    -Wextra
+    -Wno-double-promotion
+    -Wno-conversion
+    -Wno-sign-conversion
+    -Wno-unused-parameter
+    -Wno-unused-function
+    -g3
+)
+
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     include(CTest)
@@ -17,5 +28,4 @@ endif()
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_subdirectory(tests)
 endif()
-
 

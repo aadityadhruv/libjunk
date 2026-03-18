@@ -1,3 +1,4 @@
+#pragma once
 /**
  * Provide various functions to generate psuedo-random numbers
  *
@@ -17,7 +18,8 @@ struct junk_rand {
  * values. See https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
  *
  * @param seed generator seed
- * @returns junk_rand generator
+ * @param r Output generator
+ * @return 0 on success
  */
-struct junk_rand* junk_rand_init(int seed);
+int junk_rand_init(int seed, struct junk_rand* r);
 int junk_rand(struct junk_rand* r);
