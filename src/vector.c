@@ -67,3 +67,6 @@ void* junk_vector_pop(struct junk_vector* vec, int index) {
     vec->len -= 1;
     return *ptr;
 }
+void junk_vector_free(struct junk_vector* vec) {
+    free(vec->array);
+}
