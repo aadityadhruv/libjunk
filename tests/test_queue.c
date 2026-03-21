@@ -18,9 +18,9 @@ void test_queue_insert() {
     char* item1 = "item1";
     char* item2 = "item2";
     char* item3 = "item3";
-    junk_queue_insert(&q, item1);
-    junk_queue_insert(&q, item2);
-    junk_queue_insert(&q, item3);
+    junk_queue_push(&q, item1);
+    junk_queue_push(&q, item2);
+    junk_queue_push(&q, item3);
     assert(q.size == 3);
     assert(q.head->ptr == item1);
     assert(q.tail->ptr == item3);
@@ -35,9 +35,9 @@ void test_queue_length() {
     char* item1 = "item1";
     char* item2 = "item2";
     char* item3 = "item3";
-    junk_queue_insert(&q, item1);
-    junk_queue_insert(&q, item2);
-    junk_queue_insert(&q, item3);
+    junk_queue_push(&q, item1);
+    junk_queue_push(&q, item2);
+    junk_queue_push(&q, item3);
     assert(junk_queue_length(&q) == 3);
     junk_queue_free(&q);
 }
@@ -48,9 +48,9 @@ void test_queue_peek() {
     char* item1 = "item1";
     char* item2 = "item2";
     char* item3 = "item3";
-    junk_queue_insert(&q, item1);
-    junk_queue_insert(&q, item2);
-    junk_queue_insert(&q, item3);
+    junk_queue_push(&q, item1);
+    junk_queue_push(&q, item2);
+    junk_queue_push(&q, item3);
     assert(junk_queue_peek(&q) == item1);
     junk_queue_free(&q);
 }
@@ -61,9 +61,9 @@ void test_queue_pop() {
     char* item1 = "item1";
     char* item2 = "item2";
     char* item3 = "item3";
-    junk_queue_insert(&q, item1);
-    junk_queue_insert(&q, item2);
-    junk_queue_insert(&q, item3);
+    junk_queue_push(&q, item1);
+    junk_queue_push(&q, item2);
+    junk_queue_push(&q, item3);
 
     assert(junk_queue_pop(&q) == item1);
     assert(junk_queue_length(&q) == 2);

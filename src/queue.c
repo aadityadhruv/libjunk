@@ -10,7 +10,7 @@ int junk_queue_init(struct junk_queue* queue) {
     return 0;
 }
 
-int junk_queue_insert(struct junk_queue* queue, void* element) {
+int junk_queue_push(struct junk_queue* queue, void* element) {
     struct junk_queue_item* next = malloc(sizeof(struct junk_queue_item));
     next->next = NULL;
     next->ptr = element;

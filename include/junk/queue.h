@@ -34,7 +34,7 @@ int junk_queue_init(struct junk_queue* queue);
 /*
  * Insert an item in an initialized queue
  */
-int junk_queue_insert(struct junk_queue* queue, void* element);
+int junk_queue_push(struct junk_queue* queue, void* element);
 
 /*
  * Get the current size of a queue
