@@ -17,7 +17,8 @@ int junk_queue_push(struct junk_queue* queue, void* element) {
     // List is empty
     if (queue->head == NULL) {
         if (queue->size != 0) {
-            fprintf(stderr, "junk_queue_insert: queue head null but size non zero (%d)!", queue->size);
+            fprintf(stderr, "junk_queue_push: queue head null but size non zero (%d)!\n", queue->size);
+            free(next);
             return -1;
         }
         queue->head = next;
@@ -25,7 +26,8 @@ int junk_queue_push(struct junk_queue* queue, void* element) {
         queue->size = 1;
     } else {
         if (queue->tail == NULL) {
-            fprintf(stderr, "junk_queue_insert: queue tail is null but size non zero (%d)!", queue->size);
+            fprintf(stderr, "junk_queue_push: queue tail is null but size non zero (%d)!\n", queue->size);
+            free(next);
             return -1;
         }
         queue->tail->next = next;
@@ -55,13 +57,13 @@ void* junk_queue_pop(struct junk_queue* queue) {
     // Queue of size 1
     if (queue->head == NULL) {
         if (queue->tail != NULL || queue->size != 0) {
-            fprintf(stderr, "junk_queue_pop: head is NULL but tail or queue size isn't (%d)", queue->size);
+            fprintf(stderr, "junk_queue_pop: head is NULL but tail or queue size isn't (%d)\n", queue->size);
             return NULL;
         }
     }
     if (queue->head == queue->tail) {
         if (queue->size != 1) {
-            fprintf(stderr, "junk_queue_pop: queue head == queue tail but size not one (%d)!", queue->size);
+            fprintf(stderr, "junk_queue_pop: queue head == queue tail but size not one (%d)!\n", queue->size);
             return NULL;
         }
         queue->tail = NULL;
