@@ -4,9 +4,38 @@
 //Layer 4, TCP
 #include <linux/if_ether.h>
 #include <linux/types.h>
-int junk_tcp_ipv4_send(char* ip, char* port, char* data);
-int tcp_ipv4_recv(char* ip, char* port, char* data);
-int ipv4_bind(char* ip, char* port, char* data);
+/*
+ * Connect to an IP and port. This function creates a socket and connect() to the provided
+ * IP and Port
+ * @param ip Destination IP
+ * @param port Destination port
+ * @return The socket with an open connection, -1 if we failed to connect
+ */
+int junk_tcp_ipv4_connect(char *ip, char* port);
+/*
+ * Send data over a connected socket. Usually used after calling junk_tcp_ipv4_connect
+ * The function will attempt to send the whole block of data
+ * @param data Data buffer to send
+ * @param size Size of the data buffer
+ * @return 0 on success, -1 on error
+ */
+int junk_tcp_ipv4_send(int sock, char *data, int size);
+/*
+ * Bind an IP address and port to a socket. The function will return a socket
+ * if the bind was successful
+ * @param ip IP address to bind to
+ * @param port Port to bind to
+ * @return socket fd if successful, -1 if error
+ */
+int junk_tcp_ipv4_bind(char* ip, char* port);
+/*
+ * Receive data over a connected socket.
+ * The function will attempt to recv the whole block of data
+ * @param data Data buffer to write output to
+ * @param size Amount of bytes to write
+ * @return 0 on success, -1 on error
+ */
+int junk_tcp_ipv4_recv(int sock, char *data, int size);
 
 
 //Layer 2, Ethernet
