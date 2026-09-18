@@ -4,6 +4,7 @@
 //Layer 4, TCP
 #include <linux/if_ether.h>
 #include <linux/types.h>
+
 /*
  * Connect to an IP and port. This function creates a socket and connect() to the provided
  * IP and Port
@@ -56,3 +57,10 @@ typedef struct arp_packet {
 int junk_eth_arp_bind(char address[]);
 int junk_eth_arp_send(int sockfd, arp_packet* data);
 int junk_eth_arp_recv(int sockfd, arp_packet* packet);
+
+
+
+int junk_udp_ipv4_recv(int sock, char *data, int size);
+int junk_udp_ipv4_socket();
+int junk_udp_ipv4_bind(char* ip, char* port);
+int junk_udp_ipv4_send(int sock, char* ip, char* port, char* data, int size);

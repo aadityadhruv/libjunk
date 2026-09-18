@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #ifdef __linux__
+#include "poll.h"
 #include "junk/network.h"
 #include <arpa/inet.h>
 #include <linux/if_link.h>
@@ -55,9 +56,13 @@ int junk_tcp_ipv4_connect(char *ip, char* port) {
 int junk_tcp_ipv4_send(int sock, char *data, int size) {
   int bytes_sent = 0;
   int total_bytes_sent = 0;
+  struct pollfd pfd = {
+      .events = POLLOUT,
+      .fd = sock,
+  };
 
   while (1) {
-    if ((bytes_sent = send(sock, data, size, 0)) == -1) {
+    if (poll(&pfd, 1, -1) <= 0 || (bytes_sent = send(sock, data + total_bytes_sent, size - total_bytes_sent, 0)) == -1) {
       fprintf(stderr, "%s: send (%d): %s\n", TAG, errno, strerror(errno));
       return -1;
     }
@@ -74,7 +79,7 @@ int junk_tcp_ipv4_recv(int sock, char *data, int size) {
   int total_bytes_recv = 0;
 
   while (1) {
-    if ((bytes_recv = recv(sock, data, size, 0)) == -1) {
+    if ((bytes_recv = recv(sock, data + total_bytes_recv, size - total_bytes_recv, 0)) == -1) {
       fprintf(stderr, "%s: recv (%d): %s\n", TAG, errno, strerror(errno));
       return -1;
     }
@@ -86,6 +91,74 @@ int junk_tcp_ipv4_recv(int sock, char *data, int size) {
   return 0;
 }
 
+int junk_udp_ipv4_send(int sock, char* ip, char* port, char* data, int size) {
+  //TODO: Is this expensive for every send?
+  struct addrinfo hints, *p, *res;
+
+  memset(&hints, 0, sizeof hints);
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+
+  if (getaddrinfo(ip, port, &hints, &res) != 0) {
+    fprintf(stderr, "%s: getaddrinfo (%d): %s\n", TAG, errno,
+            gai_strerror(errno));
+    return -1;
+  }
+
+  if ((sendto(sock, data, size, 0, res->ai_addr, res->ai_addrlen)) == -1) {
+      fprintf(stderr, "%s: send (%d): %s\n", TAG, errno, strerror(errno));
+      return -1;
+  }
+  return 0;
+}
+int junk_udp_ipv4_recv(int sock, char *data, int size) {
+    if ((recvfrom(sock, data, size, 0, NULL, NULL)) == -1) {
+      fprintf(stderr, "%s: recv (%d): %s\n", TAG, errno, strerror(errno));
+      return -1;
+    }
+  return 0;
+}
+int junk_udp_ipv4_socket() {
+    int sock;
+    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) ==
+            -1) {
+        fprintf(stderr, "%s: socket (%d): %s\n", TAG, errno, strerror(errno));
+        return -1;
+    }
+    return sock;
+}
+
+int junk_udp_ipv4_bind(char* ip, char* port) {
+
+  int sock;
+  struct addrinfo hints, *p, *res;
+
+  memset(&hints, 0, sizeof hints);
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_DGRAM;
+
+  if (getaddrinfo(ip, port, &hints, &res) != 0) {
+    fprintf(stderr, "%s: getaddrinfo (%d): %s\n", TAG, errno,
+            gai_strerror(errno));
+    return -1;
+  }
+
+  if ((sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) ==
+      -1) {
+    fprintf(stderr, "%s: socket (%d): %s\n", TAG, errno, strerror(errno));
+    return -1;
+  }
+
+  int option = 1;
+  setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+
+  if (bind(sock, res->ai_addr, res->ai_addrlen) == -1) {
+    fprintf(stderr, "%s: connect (%d): %s\n", TAG, errno, strerror(errno));
+    return -1;
+  }
+  freeaddrinfo(res);
+  return sock;
+};
 int junk_tcp_ipv4_bind(char* ip, char* port) {
 
   int sock;
@@ -106,6 +179,9 @@ int junk_tcp_ipv4_bind(char* ip, char* port) {
     fprintf(stderr, "%s: socket (%d): %s\n", TAG, errno, strerror(errno));
     return -1;
   }
+
+  int option = 1;
+  setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
   if (bind(sock, res->ai_addr, res->ai_addrlen) == -1) {
     fprintf(stderr, "%s: connect (%d): %s\n", TAG, errno, strerror(errno));
