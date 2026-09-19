@@ -1,16 +1,17 @@
 #include <stdint.h>
 #include <stdlib.h>
-#ifdef __linux__
 #include "poll.h"
 #include "junk/network.h"
 #include <arpa/inet.h>
-#include <linux/if_link.h>
 #include <net/if.h>
 #include <errno.h>
+#ifdef __linux__
+#include <linux/if_link.h>
 #include <linux/if_arp.h>
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <net/ethernet.h> /* the L2 protocols */
+#endif
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stddef.h>
@@ -191,6 +192,7 @@ int junk_tcp_ipv4_bind(char* ip, char* port) {
   return sock;
 };
 
+#ifdef __linux__
 /* eth_arp_bind
  * Bind to a L2 Ethernet address.
  *

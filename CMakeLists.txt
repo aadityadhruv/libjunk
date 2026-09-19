@@ -4,7 +4,8 @@ project(libjunk VERSION 1.0
   DESCRIPTION "General purpose library"
   LANGUAGES C)
 set(CMAKE_BUILD_TYPE Debug)
-add_library(junk SHARED)
+option(BUILD_SHARED_LIBS "Build as shared" ON)
+add_library(junk)
 add_subdirectory(src)
 target_include_directories(junk PUBLIC include)
 install(TARGETS junk)

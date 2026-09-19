@@ -2,8 +2,10 @@
 
 
 //Layer 4, TCP
+#ifdef __linux__
 #include <linux/if_ether.h>
 #include <linux/types.h>
+#endif
 
 /*
  * Connect to an IP and port. This function creates a socket and connect() to the provided
@@ -39,6 +41,7 @@ int junk_tcp_ipv4_bind(char* ip, char* port);
 int junk_tcp_ipv4_recv(int sock, char *data, int size);
 
 
+#ifdef __linux__
 //Layer 2, Ethernet
 typedef struct ethhdr ethhdr;
 
@@ -57,6 +60,7 @@ typedef struct arp_packet {
 int junk_eth_arp_bind(char address[]);
 int junk_eth_arp_send(int sockfd, arp_packet* data);
 int junk_eth_arp_recv(int sockfd, arp_packet* packet);
+#endif
 
 
 
