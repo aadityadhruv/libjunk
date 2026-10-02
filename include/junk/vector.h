@@ -52,4 +52,4 @@ void* junk_vector_pop(struct junk_vector* vec, int index);
 void junk_vector_free(struct junk_vector* vec);
 
 #define JUNK_VECTOR_INSERT(vec, element) junk_vector_insert(vec, element, (vec)->len)
-#define JUNK_VECTOR_POP(vec) junk_vector_pop(vec, (vec)->len)mutt_generate_attachment_commands
+#define JUNK_VECTOR_POP(vec) junk_vector_pop(vec, (vec)->len)
