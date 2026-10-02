@@ -34,8 +34,8 @@ int junk_vector_insert(struct junk_vector* vec, void* element, int pos) {
     }
     void** ptr = vec->array + pos;
     void* buf[vec->len - pos];
-    memcpy(buf, ptr, vec->len - pos);
-    memcpy(ptr + 1, buf, vec->len - pos);
+    memcpy(buf, ptr, (vec->len - pos) * sizeof(void*));
+    memcpy(ptr + 1, buf, (vec->len - pos) * sizeof(void*));
     *ptr = element;
     vec->len += 1;
     return 0;
@@ -57,15 +57,16 @@ void* junk_vector_pop(struct junk_vector* vec, int index) {
         return NULL;
     }
     void** ptr = vec->array + index;
+    void* ret = *ptr;
     void* buf[vec->len - index];
     // TODO: This +1 *should* be safe if last element since 
     // we allocate more than needed, so there will be 0s
     // Also we exploit this fact by not doing a -1 on the size
     // Copying 1 more blank byte just to make it easier to write
-    memcpy(buf, ptr + 1, vec->len - index);
-    memcpy(ptr, buf, vec->len - index);
+    memcpy(buf, ptr + 1, (vec->len - index)*sizeof(void*));
+    memcpy(ptr, buf, (vec->len - index)*sizeof(void*));
     vec->len -= 1;
-    return *ptr;
+    return ret;
 }
 void junk_vector_free(struct junk_vector* vec) {
     free(vec->array);
